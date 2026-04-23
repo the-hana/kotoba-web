@@ -12,6 +12,9 @@ dist-ssr/
 # エディタ
 .DS_Store
 
+# TypeScript
+*.tsbuildinfo
+
 # Claude Code
 CLAUDE.md
 .claude/
