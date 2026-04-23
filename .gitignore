@@ -1,1 +1,17 @@
+# 依存関係
+node_modules/
+
+# ビルド成果物
+dist/
+dist-ssr/
+
+# 環境変数
+.env.local
+.env.*.local
+
+# エディタ
+.DS_Store
+
+# Claude Code
 CLAUDE.md
+.claude/
