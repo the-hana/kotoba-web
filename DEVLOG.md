@@ -4,6 +4,17 @@
 
 ## 2026-04-23
 
+### TailwindCSS・ESLint・Prettier設定を追加
+
+- `vite.config.ts`: `@tailwindcss/vite` プラグイン追加、`@` → `src/` パスエイリアス設定
+- `tsconfig.app.json`: `baseUrl`・`paths` 追加、`DOM.Iterable` 追加（業界標準、DOM APIイテラブル型に必要）
+- `src/index.css`: Vite デフォルトスタイル削除 → TailwindCSS v4 インラインモード + Noto Sans フォント設定
+- `.prettierrc.json` 新規作成
+- `eslint-config-prettier` 導入: ESLint・Prettier ルール競合防止のため（業界標準）
+- `package.json` に `format`・`format:check` スクリプト追加
+
+---
+
 ### Viteプロジェクト初期化・依存関係インストール
 
 - Vite + React + TypeScript テンプレートで初期化
