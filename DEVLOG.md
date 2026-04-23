@@ -4,6 +4,16 @@
 
 ## 2026-04-23
 
+### TypeScript型定義を追加
+
+- `src/types/index.ts` 新規作成
+- `ApiResponse<T>`: Discriminated Union で success/failure を型安全に分岐
+- `error: string | string[]`: Rails バリデーションエラーが配列で返るケースに対応
+- `AiContent` を独立 interface に抽出（インライン匿名型は再利用不可のため）
+- `DailyStoryWord`: `Word` の extends を廃止。API レスポンスに `bookmarked` が含まれないため独立定義。`example_sentence` は `string | null`（ai_content 未生成時は null）
+
+---
+
 ### TailwindCSS・ESLint・Prettier設定を追加
 
 - `vite.config.ts`: `@tailwindcss/vite` プラグイン追加、`@` → `src/` パスエイリアス設定
