@@ -2,6 +2,20 @@
 
 ---
 
+## 2026-04-24
+
+### Zustand認証Storeを実装
+
+- `src/stores/authStore.ts` 新規作成
+- `persist` ミドルウェア採用: localStorage の同期を Zustand に委譲（業界標準）
+- `partialize` で `refreshToken` のみ永続化。`accessToken` はメモリ専用（セキュリティ上 localStorage に保存しない）
+- インターフェースを `MemoryState` / `PersistedState` / `AuthActions` に分離して persist 対象を明示
+- `STORAGE_KEY = 'kotoba-auth'`: アプリ固有 key でブラウザ内の他アプリとの衝突を防止
+- `baseUrl` 廃止: TypeScript 6.0 で deprecated のため `paths` のみに移行（`./src/*`）
+- `.prettierignore` 追加: `pnpm-lock.yaml`・`dist/` を Prettier 対象外に設定
+
+---
+
 ## 2026-04-23
 
 ### TypeScript型定義を追加
@@ -39,15 +53,15 @@
 
 #### 技術スタック確定
 
-| カテゴリ | 採用技術 | 理由 |
-|----------|----------|------|
-| ビルド | Vite + React + TypeScript | SPA標準構成 |
-| スタイリング | TailwindCSS v4 (インライン) | 業界標準。`tailwind.config.ts`不要、CSS内`@theme`で設定 |
-| 状態管理 | Zustand | 軽量、boilerplate少、SPAの規模に適合 |
-| HTTP | axios | interceptorでトークン自動更新が実装しやすい |
-| ルーティング | React Router v7 | |
-| アイコン | lucide-react | |
-| ユーティリティ | clsx | 条件付きclassName結合用 |
+| カテゴリ       | 採用技術                    | 理由                                                    |
+| -------------- | --------------------------- | ------------------------------------------------------- |
+| ビルド         | Vite + React + TypeScript   | SPA標準構成                                             |
+| スタイリング   | TailwindCSS v4 (インライン) | 業界標準。`tailwind.config.ts`不要、CSS内`@theme`で設定 |
+| 状態管理       | Zustand                     | 軽量、boilerplate少、SPAの規模に適合                    |
+| HTTP           | axios                       | interceptorでトークン自動更新が実装しやすい             |
+| ルーティング   | React Router v7             |                                                         |
+| アイコン       | lucide-react                |                                                         |
+| ユーティリティ | clsx                        | 条件付きclassName結合用                                 |
 
 #### ディレクトリ構造
 
@@ -113,6 +127,7 @@ src/
 #### axios Race Condition対応
 
 同時に複数の401が発生した場合のrefresh重複リクエスト防止:
+
 - モジュールレベルの `isRefreshing: boolean` フラグ
 - `failedQueue: {resolve, reject}[]` パターン
 - 最初の401のみrefreshを実行し、後続はqueue待機 → refresh完了後に一括再試行
