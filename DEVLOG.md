@@ -2,6 +2,19 @@
 
 ---
 
+## 2026-04-26
+
+### axiosクライアントとトークン自動更新を実装
+
+- `src/api/client.ts` 新規作成
+- request interceptor で全リクエストに `Authorization: Bearer <token>` を付与
+- response interceptor で 401 時にrefreshを実行してリクエストをリトライ
+- Race condition対応: `isRefreshing` フラグ + `failedQueue` パターンで同時多発401でもrefreshは1回だけ実行
+- refresh 成功後に `failedQueue` の待機リクエストを一括再試行
+- `Authorization` ヘッダーを refresh リクエストから除去: access token が null の場合に `Bearer null` になるため
+
+---
+
 ## 2026-04-24
 
 ### Zustand認証Storeを実装
