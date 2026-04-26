@@ -4,6 +4,15 @@
 
 ## 2026-04-26
 
+### ProtectedRouteとAppShellレイアウトを実装
+
+- `src/components/ProtectedRoute.tsx`: マウント時にrefreshTokenで自動復元。`isInitialized`がfalseの間はLoadingSpinnerを表示し認証の空白を防ぐ
+- `src/components/ui/LoadingSpinner.tsx`: `role="status"` + `aria-label` 追加 (WCAG準拠)
+- `src/components/layout/AppShell.tsx`, `BottomTabNav.tsx`, `SidebarNav.tsx`: モバイル下部タブ / デスクトップサイドバーを `md:hidden` / `hidden md:flex` で切り替え
+- `useEffect` 依存配列を `[isInitialized, setTokens, clearAuth, setInitialized]` に修正: ESLint `react-hooks/exhaustive-deps` 警告を解消。Zustand actionsは参照が安定しているため再実行されない
+
+---
+
 ### ログイン・会員登録ページを実装
 
 - `src/pages/auth/LoginPage.tsx`, `SignupPage.tsx` 新規作成

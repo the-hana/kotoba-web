@@ -1,0 +1,34 @@
+import { useEffect } from 'react'
+import { Navigate, Outlet } from 'react-router-dom'
+import { useAuthStore } from '@/stores/authStore'
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
+import { apiClient } from '@/api/client'
+
+export const ProtectedRoute = () => {
+  const { accessToken, isInitialized, setTokens, clearAuth, setInitialized } = useAuthStore()
+
+  useEffect(() => {
+    if (isInitialized) return
+
+    const refreshToken = useAuthStore.getState().refreshToken
+    if (!refreshToken) {
+      setInitialized()
+      return
+    }
+
+    // refreshTokenがあればアクセストークンを復元
+    apiClient
+      .post('/api/v1/auth/refresh', { refresh_token: refreshToken })
+      .then((res) => {
+        if (!res.data.success) throw new Error()
+        const { access_token, refresh_token } = res.data.data
+        setTokens(access_token, refresh_token)
+      })
+      .catch(() => clearAuth())
+      .finally(() => setInitialized())
+  }, [isInitialized, setTokens, clearAuth, setInitialized])
+
+  if (!isInitialized) return <LoadingSpinner />
+  if (!accessToken) return <Navigate to="/login" replace />
+  return <Outlet />
+}
