@@ -4,6 +4,14 @@
 
 ## 2026-04-26
 
+### ドメイン別API関数を実装
+
+- `src/api/{auth,words,bookmarks,wordDays,studySession,profile,dailyStory}.ts` 新規作成
+- 全関数の戻り値に `ApiResponse<T>` ジェネリックを明示してレスポンス型を統一
+- `signup` の `target_level` を `string` から `JlptLevel` に変更: 呼び出し元の型ガードを強化するため
+
+---
+
 ### axiosクライアントとトークン自動更新を実装
 
 - `src/api/client.ts` 新規作成
