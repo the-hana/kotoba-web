@@ -4,6 +4,14 @@
 
 ## 2026-04-26
 
+### 二次レビューによる修正
+
+- `ProtectedRoute`: `apiClient.post` → raw `axios.post` に変更。`apiClient` 経由だとresponse interceptorが401に反応して二重refreshが発生するため
+- `BottomTabNav`: `aria-label="モバイルナビゲーション"` 追加
+- `SidebarNav`: `aria-label="サイドバーナビゲーション"` 追加。同一ページに `<nav>` が複数ある場合、スクリーンリーダーの識別のためlabelが必要 (WCAG)
+
+---
+
 ### App.tsxルーティングを実装
 
 - `src/App.tsx`, `src/main.tsx` を書き換え

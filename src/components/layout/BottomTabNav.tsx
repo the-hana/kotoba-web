@@ -10,7 +10,7 @@ const TABS = [
 ]
 
 export const BottomTabNav = () => (
-  <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 flex md:hidden">
+  <nav aria-label="モバイルナビゲーション" className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 flex md:hidden">
     {TABS.map(({ to, icon: Icon, label }) => (
       <NavLink
         key={to}

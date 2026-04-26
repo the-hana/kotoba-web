@@ -1,8 +1,8 @@
+import axios from 'axios'
 import { useEffect } from 'react'
 import { Navigate, Outlet } from 'react-router-dom'
 import { useAuthStore } from '@/stores/authStore'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
-import { apiClient } from '@/api/client'
 
 export const ProtectedRoute = () => {
   const { accessToken, isInitialized, setTokens, clearAuth, setInitialized } = useAuthStore()
@@ -16,9 +16,9 @@ export const ProtectedRoute = () => {
       return
     }
 
-    // refreshTokenがあればアクセストークンを復元
-    apiClient
-      .post('/api/v1/auth/refresh', { refresh_token: refreshToken })
+    // interceptorを経由させないためaxiosを直接使用
+    axios
+      .post(`${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/refresh`, { refresh_token: refreshToken })
       .then((res) => {
         if (!res.data.success) throw new Error()
         const { access_token, refresh_token } = res.data.data
