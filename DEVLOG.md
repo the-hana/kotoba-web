@@ -4,6 +4,15 @@
 
 ## 2026-04-26
 
+### App.tsxルーティングを実装
+
+- `src/App.tsx`, `src/main.tsx` を書き換え
+- `ProtectedRoute` → `AppShell` の2段ネストで認証ガードとレイアウトを分離
+- `path="*"` → `/dashboard` へリダイレクト: 未認証なら ProtectedRoute が `/login` へ続けて転送
+- `StrictMode` 維持: 本番はno-op、開発時の副作用検出のため標準設定
+
+---
+
 ### 4つのメインページの基本構造を実装
 
 - `DashboardPage`, `StudyPage`, `BookmarkPage`, `ProfilePage` の基本構造を実装 (機能は次フェーズ)
