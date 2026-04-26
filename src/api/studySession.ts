@@ -2,7 +2,7 @@ import { apiClient } from './client'
 import type { ApiResponse, StudySession } from '@/types'
 
 export const getStudySession = () =>
-  apiClient.get<ApiResponse<StudySession>>('/api/v1/study_session')
+  apiClient.get<ApiResponse<StudySession | null>>('/api/v1/study_session')
 
 export const updateStudySession = (word_day_id: number) =>
   apiClient.put<ApiResponse<StudySession>>('/api/v1/study_session', { word_day_id })

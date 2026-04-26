@@ -1,5 +1,7 @@
 export type JlptLevel = 'n5' | 'n4' | 'n3' | 'n2' | 'n1'
 
+export type StreakStatus = 'today' | 'yesterday' | 'broken' | 'none'
+
 export type ApiResponse<T> =
   | { success: true; data: T; error: null }
   | { success: false; data: null; error: string | string[] }

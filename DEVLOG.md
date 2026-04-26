@@ -4,6 +4,22 @@
 
 ## 2026-04-26
 
+### DashboardPage 実装 — API連携・AI ストーリーカード・連続学習日
+
+- `useDailyStory` / `useStreak` フックを新規作成。loading / error / data の3点返却パターンに統一
+- `WordDetailModal` を新規作成。ESC キー・backdrop クリックで閉じる。`role="dialog"` / `aria-modal` でアクセシビリティ対応
+- `DashboardPage` を placeholder から実際のAPI連携に差し替え
+
+**設計判断・トレードオフ**
+
+- ストリーク判定はAPIが正確な日数を返さないため、`StudySession.updated_at` を基準にローカルカレンダー差分で今日/昨日/途切れの3段階のみ表示。N日カウントは意図的に断念
+- 「이어서 학습」ボタンのURL: `word_day_id`（DB FK）ではなく `day_number` を使用。Phase 2 StudyPage が `GET /api/v1/words?day_number=` を呼ぶため、URLパラメータは `day_number` に統一する必要があった
+- `onClose` を `useCallback` でメモ化し、WordDetailModal内のESCハンドラーが毎レンダーで再登録されるのを防止
+- AbortController によるクリーンアップを両フックに追加。アンマウント後の setState 呼び出しを抑制
+- モーダルオープン時に `document.body.style.overflow = 'hidden'` でスクロールロック、クローズボタンへ自動フォーカス移動（WCAG 2.1 AA 最低限準拠）
+
+---
+
 ### 二次レビューによる修正
 
 - `ProtectedRoute`: `apiClient.post` → raw `axios.post` に変更。`apiClient` 経由だとresponse interceptorが401に反応して二重refreshが発生するため
