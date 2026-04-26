@@ -46,6 +46,7 @@ export interface StudySession {
   word_day_id: number
   jlpt_level: JlptLevel
   day_number: number
+  streak_days: number
   updated_at: string
 }
 

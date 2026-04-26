@@ -4,19 +4,12 @@ import { useDailyStory } from '@/hooks/useDailyStory'
 import { useStreak } from '@/hooks/useStreak'
 import { WordDetailModal } from '@/components/WordDetailModal'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
-import type { DailyStoryWord, StreakStatus } from '@/types'
-
-const streakLabel: Record<StreakStatus, string> = {
-  today: '학습 중',
-  yesterday: '유지 중',
-  broken: '끊김',
-  none: '시작 전',
-}
+import type { DailyStoryWord } from '@/types'
 
 export const DashboardPage = () => {
   const navigate = useNavigate()
   const { data: story, loading: storyLoading, error: storyError } = useDailyStory()
-  const { session, status, loading: streakLoading } = useStreak()
+  const { session, status, loading: streakLoading, error: streakError } = useStreak()
   const [selectedWord, setSelectedWord] = useState<DailyStoryWord | null>(null)
 
   const handleContinueStudy = () => {
@@ -32,6 +25,10 @@ export const DashboardPage = () => {
 
   if (storyLoading || streakLoading) return <LoadingSpinner />
 
+  // 連続中(今日・昨日)はstreak_days実数値、それ以外はデフォルト1を表示
+  const isActive = status === 'today' || status === 'yesterday'
+  const displayDays = isActive ? (session?.streak_days ?? 1) : 1
+
   return (
     <div className="p-6 max-w-2xl mx-auto">
       <h1 className="text-2xl font-bold text-slate-800 mb-6">대시보드</h1>
@@ -39,15 +36,17 @@ export const DashboardPage = () => {
       {/* 連続学習日カード */}
       <div className="bg-white rounded-2xl p-6 shadow-sm mb-4 flex items-center justify-between">
         <div>
-          <p className="text-sm text-slate-500">연속 학습일</p>
-          {status === 'none' ? (
-            <p className="text-base font-semibold text-slate-400 mt-1">학습을 시작해보세요</p>
+          <p className="text-sm text-slate-500 mb-1">연속 학습일</p>
+          {streakError ? (
+            <p className="text-sm text-red-400">{streakError}</p>
           ) : (
-            <div className="flex items-baseline gap-2 mt-1">
-              <p className="text-4xl font-bold text-indigo-500">
-                {status === 'today' || status === 'yesterday' ? '✓' : '×'}
+            <div className="flex items-baseline gap-1">
+              <p className={`text-4xl font-bold ${isActive ? 'text-indigo-500' : 'text-slate-400'}`}>
+                {displayDays}
               </p>
-              <span className="text-sm text-slate-500">{streakLabel[status]}</span>
+              <span className={`text-lg font-semibold ${isActive ? 'text-indigo-400' : 'text-slate-300'}`}>
+                일
+              </span>
             </div>
           )}
         </div>

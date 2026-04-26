@@ -4,6 +4,16 @@
 
 ## 2026-04-26
 
+### コードレビュー対応 — AbortSignal修正・streak_days導入・UIリファクタ
+
+- `getDailyStory` / `getStudySession` にAbortSignalパラメータを追加。abort()が実際のHTTPリクエストをキャンセルするように修正
+- `useStreak`のerrorをDashboardPageで消費。API失敗時のsilent failureを解消
+- `StudySession`に`streak_days: number`を追加。バックエンドに同フィールドの実装が必要
+- 連続学習日の表示ロジックを変更: 連続中（today/yesterday）はAPI値をそのまま表示、未学習・途切れはデフォルト1日表示。✓/×記号を廃止し数値表示に統一
+- `streakLabel`のdead codeを削除し`isActive`フラグに集約
+
+---
+
 ### DashboardPage 実装 — API連携・AI ストーリーカード・連続学習日
 
 - `useDailyStory` / `useStreak` フックを新規作成。loading / error / data の3点返却パターンに統一

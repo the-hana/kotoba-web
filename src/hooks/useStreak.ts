@@ -11,7 +11,7 @@ export const useStreak = () => {
   useEffect(() => {
     const controller = new AbortController()
 
-    getStudySession()
+    getStudySession(controller.signal)
       .then((res) => {
         if (controller.signal.aborted) return
         if (!res.data.success) {

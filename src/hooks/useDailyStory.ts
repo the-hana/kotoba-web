@@ -10,7 +10,7 @@ export const useDailyStory = () => {
   useEffect(() => {
     const controller = new AbortController()
 
-    getDailyStory()
+    getDailyStory(controller.signal)
       .then((res) => {
         if (controller.signal.aborted) return
         if (res.data.success) setData(res.data.data)
