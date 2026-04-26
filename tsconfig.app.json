@@ -16,8 +16,7 @@
     "jsx": "react-jsx",
 
     /* パスエイリアス */
-    "baseUrl": ".",
-    "paths": { "@/*": ["src/*"] },
+    "paths": { "@/*": ["./src/*"] },
 
     /* Linting */
     "noUnusedLocals": true,
