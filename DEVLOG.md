@@ -4,6 +4,14 @@
 
 ## 2026-04-26
 
+### 4つのメインページの基本構造を実装
+
+- `DashboardPage`, `StudyPage`, `BookmarkPage`, `ProfilePage` の基本構造を実装 (機能は次フェーズ)
+- `ProfilePage.handleLogout`: API失敗時も `finally` で必ずローカル状態をクリアする設計
+- `<button>` に `type="button"` を明示: form 外でもデフォルト type は `submit` のため明示が標準
+
+---
+
 ### ProtectedRouteとAppShellレイアウトを実装
 
 - `src/components/ProtectedRoute.tsx`: マウント時にrefreshTokenで自動復元。`isInitialized`がfalseの間はLoadingSpinnerを表示し認証の空白を防ぐ
