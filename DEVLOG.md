@@ -4,6 +4,15 @@
 
 ## 2026-04-26
 
+### ログイン・会員登録ページを実装
+
+- `src/pages/auth/LoginPage.tsx`, `SignupPage.tsx` 新規作成
+- `res.data.success` チェック後に discriminated union narrowing でトークン取得
+- ログイン失敗時は固定メッセージ表示 (実際のAPIエラーを露出させない — セキュリティ標準)
+- `label` に `htmlFor` + `input` に `id` を追加: クリックでフォーカス移動 + スクリーンリーダー対応 (WCAG 2.1)
+
+---
+
 ### ドメイン別API関数を実装
 
 - `src/api/{auth,words,bookmarks,wordDays,studySession,profile,dailyStory}.ts` 新規作成
