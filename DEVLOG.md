@@ -2,6 +2,70 @@
 
 ---
 
+## 2026-04-26
+
+### 二次レビューによる修正
+
+- `ProtectedRoute`: `apiClient.post` → raw `axios.post` に変更。`apiClient` 経由だとresponse interceptorが401に反応して二重refreshが発生するため
+- `BottomTabNav`: `aria-label="モバイルナビゲーション"` 追加
+- `SidebarNav`: `aria-label="サイドバーナビゲーション"` 追加。同一ページに `<nav>` が複数ある場合、スクリーンリーダーの識別のためlabelが必要 (WCAG)
+
+---
+
+### App.tsxルーティングを実装
+
+- `src/App.tsx`, `src/main.tsx` を書き換え
+- `ProtectedRoute` → `AppShell` の2段ネストで認証ガードとレイアウトを分離
+- `path="*"` → `/dashboard` へリダイレクト: 未認証なら ProtectedRoute が `/login` へ続けて転送
+- `StrictMode` 維持: 本番はno-op、開発時の副作用検出のため標準設定
+
+---
+
+### 4つのメインページの基本構造を実装
+
+- `DashboardPage`, `StudyPage`, `BookmarkPage`, `ProfilePage` の基本構造を実装 (機能は次フェーズ)
+- `ProfilePage.handleLogout`: API失敗時も `finally` で必ずローカル状態をクリアする設計
+- `<button>` に `type="button"` を明示: form 外でもデフォルト type は `submit` のため明示が標準
+
+---
+
+### ProtectedRouteとAppShellレイアウトを実装
+
+- `src/components/ProtectedRoute.tsx`: マウント時にrefreshTokenで自動復元。`isInitialized`がfalseの間はLoadingSpinnerを表示し認証の空白を防ぐ
+- `src/components/ui/LoadingSpinner.tsx`: `role="status"` + `aria-label` 追加 (WCAG準拠)
+- `src/components/layout/AppShell.tsx`, `BottomTabNav.tsx`, `SidebarNav.tsx`: モバイル下部タブ / デスクトップサイドバーを `md:hidden` / `hidden md:flex` で切り替え
+- `useEffect` 依存配列を `[isInitialized, setTokens, clearAuth, setInitialized]` に修正: ESLint `react-hooks/exhaustive-deps` 警告を解消。Zustand actionsは参照が安定しているため再実行されない
+
+---
+
+### ログイン・会員登録ページを実装
+
+- `src/pages/auth/LoginPage.tsx`, `SignupPage.tsx` 新規作成
+- `res.data.success` チェック後に discriminated union narrowing でトークン取得
+- ログイン失敗時は固定メッセージ表示 (実際のAPIエラーを露出させない — セキュリティ標準)
+- `label` に `htmlFor` + `input` に `id` を追加: クリックでフォーカス移動 + スクリーンリーダー対応 (WCAG 2.1)
+
+---
+
+### ドメイン別API関数を実装
+
+- `src/api/{auth,words,bookmarks,wordDays,studySession,profile,dailyStory}.ts` 新規作成
+- 全関数の戻り値に `ApiResponse<T>` ジェネリックを明示してレスポンス型を統一
+- `signup` の `target_level` を `string` から `JlptLevel` に変更: 呼び出し元の型ガードを強化するため
+
+---
+
+### axiosクライアントとトークン自動更新を実装
+
+- `src/api/client.ts` 新規作成
+- request interceptor で全リクエストに `Authorization: Bearer <token>` を付与
+- response interceptor で 401 時にrefreshを実行してリクエストをリトライ
+- Race condition対応: `isRefreshing` フラグ + `failedQueue` パターンで同時多発401でもrefreshは1回だけ実行
+- refresh 成功後に `failedQueue` の待機リクエストを一括再試行
+- `Authorization` ヘッダーを refresh リクエストから除去: access token が null の場合に `Bearer null` になるため
+
+---
+
 ## 2026-04-24
 
 ### Zustand認証Storeを実装
