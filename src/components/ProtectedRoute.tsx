@@ -1,14 +1,18 @@
 import axios from 'axios'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { Navigate, Outlet } from 'react-router-dom'
 import { useAuthStore } from '@/stores/authStore'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 
 export const ProtectedRoute = () => {
   const { accessToken, isInitialized, setTokens, clearAuth, setInitialized } = useAuthStore()
+  // StrictMode二重実行でrefreshが2回飛ばないようにフラグで制御
+  const refreshingRef = useRef(false)
 
   useEffect(() => {
     if (isInitialized) return
+    if (refreshingRef.current) return
+    refreshingRef.current = true
 
     const refreshToken = useAuthStore.getState().refreshToken
     if (!refreshToken) {

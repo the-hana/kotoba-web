@@ -1,5 +1,7 @@
 export type JlptLevel = 'n5' | 'n4' | 'n3' | 'n2' | 'n1'
 
+export type StreakStatus = 'today' | 'yesterday' | 'broken' | 'none'
+
 export type ApiResponse<T> =
   | { success: true; data: T; error: null }
   | { success: false; data: null; error: string | string[] }
@@ -44,6 +46,7 @@ export interface StudySession {
   word_day_id: number
   jlpt_level: JlptLevel
   day_number: number
+  streak_days: number
   updated_at: string
 }
 
