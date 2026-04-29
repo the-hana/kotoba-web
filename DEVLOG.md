@@ -2,6 +2,19 @@
 
 ---
 
+## 2026-04-29
+
+### 単語学習フロー実装 — レベル選択 → DAYリスト → 単語リスト + ブックマーク
+
+- `useWordDays(level)` / `useWords(level, dayNumber)` / `useBookmarkToggle(initialWords)` の3フックを新規追加
+- `StudyPage` を3段階ビュー（レベル選択 / DAYリスト / 単語リスト）に分岐。`useParams` でルート判定
+- `useWords` 内で `Promise.allSettled` を採用。`getWordDays`（セッション更新用）の失敗が単語表示をブロックしないよう分離
+- `useBookmarkToggle` は `overrides` マップパターンで楽観的更新を実装。`useEffect` 不使用でstaleなし
+- `getWordDays` / `getWords` に `signal?: AbortSignal` パラメータを追加し、アンマウント時にHTTPリクエスト自体をキャンセル可能に
+- ローディング表示を `if (loading) return <LoadingSpinner />` のearly returnパターンに統一（DashboardPage準拠）
+
+---
+
 ## 2026-04-26
 
 ### コードレビュー対応 — AbortSignal修正・streak_days導入・UIリファクタ
