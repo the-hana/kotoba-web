@@ -13,7 +13,7 @@ export const useBookmarks = () => {
     setLoading(true)
     setError(null)
 
-    getBookmarks(level ? { jlpt_level: level } : undefined)
+    getBookmarks(level ? { jlpt_level: level } : undefined, controller.signal)
       .then((res) => {
         if (controller.signal.aborted) return
         if (res.data.success) {

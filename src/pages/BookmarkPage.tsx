@@ -31,6 +31,7 @@ export const BookmarkPage = () => {
             key={tab.label}
             type="button"
             onClick={() => setLevel(tab.value)}
+            aria-pressed={level === tab.value}
             className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-colors ${
               level === tab.value
                 ? 'bg-indigo-500 text-white'
