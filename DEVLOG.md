@@ -2,6 +2,18 @@
 
 ---
 
+## 2026-05-02
+
+### 단어장ページ実装 — レベルフィルタータブ + ブックマーク解除
+
+- `useBookmarks` フックを新規追加。level filter stateを内部管理し、`getBookmarks(level?)`を呼び出す。AbortController / loading / error / data パターンを既存フックと統一
+- `BookmarkPage` を実装。レベルフィルタータブ（全体 / N5–N1）、単語カードにJLPTレベルタグ表示、ブックマーク解除ボタン（`useBookmarkToggle` 再利用）
+- `useBookmarkToggle` に `useEffect` を追加。`initialWords` 差し替え時に `overrides` をリセット。レベル切替後に古いovverridesが残りstaleな表示になるバグを修正
+- `BookmarkPage` の空状態メッセージにレベルコンテキストを追加（例：「N5 북마크한 단어가 없습니다.」）
+- `visibleWords = words.filter(w => w.bookmarked)` でブックマーク解除時の即時非表示を実現
+
+---
+
 ## 2026-04-29
 
 ### 単語学習フロー実装 — レベル選択 → DAYリスト → 単語リスト + ブックマーク

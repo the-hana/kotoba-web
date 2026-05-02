@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { addBookmark, removeBookmark } from '@/api/bookmarks'
 import type { Word } from '@/types'
 
@@ -6,6 +6,11 @@ import type { Word } from '@/types'
 export const useBookmarkToggle = (initialWords: Word[]) => {
   const [overrides, setOverrides] = useState<Record<number, boolean>>({})
   const [bookmarkError, setBookmarkError] = useState<string | null>(null)
+
+  // initialWordsが差し替わった（レベル変更・再フェッチ）タイミングでoverridesをリセット
+  useEffect(() => {
+    setOverrides({})
+  }, [initialWords])
 
   const words = initialWords.map((w) =>
     w.id in overrides ? { ...w, bookmarked: overrides[w.id] } : w,
