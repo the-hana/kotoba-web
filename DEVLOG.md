@@ -2,6 +2,19 @@
 
 ---
 
+## 2026-05-03
+
+### プロフィールページ実装 — 닉네임 수정 / 목표 레벨 변경 / 회원 탈퇴
+
+- `useProfile` フックを新規追加。`getProfile` / `updateProfile` / `deleteProfile` を呼び出す。loading / error / data パターンを既存フックと統一
+- ニックネームは inline edit パターン（`isEditing` フラグで input と表示を切替）。Enter / Escape キー対応
+- target_level はドロップダウン即時保存（別途保存ボタンなし）。保存失敗時は元の値にロールバック
+- アカウント削除は `deleteAccount()` 内で `clearAuth()` を呼び出し、`navigate('/login')` のみページ側で処理。責務を明確に分離
+- 削除確認ダイアログは `window.confirm` ではなくローカル state ベースのオーバーレイで実装（UX の統一のため）
+- `src/api/profile.ts` は既実装済みのためフック・ページのみ追加
+
+---
+
 ## 2026-05-02
 
 ### 単語帳ページ実装 — レベルフィルタータブ + ブックマーク解除
