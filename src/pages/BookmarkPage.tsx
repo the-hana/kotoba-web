@@ -53,8 +53,8 @@ export const BookmarkPage = () => {
       {/* ローディング: タブを維持したままビューポート中央にスピナー表示 */}
       {loading && <LoadingSpinner />}
 
-      {/* 単語リスト */}
-      {!loading && visibleWords.length === 0 ? (
+      {/* 単語リスト: ローディング中は旧データを表示しない */}
+      {!loading && (visibleWords.length === 0 ? (
         <div className="bg-white rounded-2xl p-6 shadow-sm">
           <p className="text-slate-400 text-sm">
             {level ? `${level.toUpperCase()} 북마크한 단어가 없습니다.` : '북마크한 단어가 없습니다.'}
@@ -86,7 +86,7 @@ export const BookmarkPage = () => {
             </div>
           ))}
         </div>
-      )}
+      ))}
     </div>
   )
 }
