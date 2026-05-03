@@ -34,6 +34,11 @@ apiClient.interceptors.response.use(
       return Promise.reject(error)
     }
 
+    // ログイン・サインアップは未認証状態のためリフレッシュ対象外
+    if (original.url?.includes('/auth/login') || original.url?.includes('/auth/signup')) {
+      return Promise.reject(error)
+    }
+
     const { refreshToken, setTokens, clearAuth } = useAuthStore.getState()
 
     if (!refreshToken) {

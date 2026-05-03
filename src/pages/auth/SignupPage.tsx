@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
+import { isAxiosError } from 'axios'
 import { signup } from '@/api/auth'
 import { useAuthStore } from '@/stores/authStore'
-import { toErrorMessage, EMAIL_RE } from '@/utils/errorMessage'
+import { EMAIL_RE } from '@/utils/errorMessage'
 import { JLPT_LEVELS } from '@/constants/jlpt'
 import type { JlptLevel } from '@/types'
 
@@ -44,15 +45,15 @@ export const SignupPage = () => {
     setError(null)
     try {
       const res = await signup({ ...form, email: form.email.trim(), nickname: form.nickname.trim() })
-      if (!res.data.success) {
-        setError(toErrorMessage(res.data.error))
-        return
-      }
       const { access_token, refresh_token } = res.data.data
       setTokens(access_token, refresh_token)
       navigate('/dashboard')
-    } catch {
-      setError('회원가입 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.')
+    } catch (err) {
+      if (isAxiosError(err) && err.response?.status === 422) {
+        setError('이미 사용 중인 이메일입니다.')
+      } else {
+        setError('회원가입에 실패했습니다. 잠시 후 다시 시도해주세요.')
+      }
     } finally {
       setLoading(false)
     }
@@ -77,7 +78,7 @@ export const SignupPage = () => {
       <div className="w-full max-w-sm bg-white rounded-2xl shadow-sm p-8">
         <h1 className="text-2xl font-bold text-slate-800 mb-6">회원가입</h1>
         {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} noValidate className="space-y-4">
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-1">이메일</label>
             <input

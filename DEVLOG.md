@@ -15,6 +15,13 @@
 - `api/client.ts` で `VITE_API_BASE_URL` 未設定時に起動時エラーをスロー。`baseURL` を定数化し `axios.post()` の URL 重複も解消
 - `useWords` の fire-and-forget を `console.warn` 付きの `.catch()` に変更。セッション更新失敗をサイレントに無視しないよう対応
 
+### フォームエラーメッセージ改善・noValidate 追加・401インターセプター修正
+
+- `LoginPage` / `SignupPage` に `noValidate` を追加。ブラウザ標準バリデーション UI を無効化し、カスタムエラー表示に一本化
+- catch ブロックを HTTP ステータスコード別に分岐。ログイン 401 → "이메일 또는 비밀번호가 올바르지 않습니다."、サインアップ 422 → "이미 사용 중인 이메일입니다."、その他 → "실패했습니다. 잠시 후 다시 시도해주세요." と状況に応じたメッセージを表示
+- `isAxiosError` を使って Axios エラーと非 Axios エラー（ネットワーク断）を区別
+- `api/client.ts` のリフレッシュインターセプターに `/auth/login` と `/auth/signup` の除外チェックを追加。ログイン失敗の 401 がリフレッシュ処理に流れ込み `/login` にリダイレクトされるバグを修正
+
 ### コードレビュー対応 — required 属性復元・パスワード確認エラークリア修正・EMAIL_RE 共通化
 
 - `LoginPage` / `SignupPage` の `required` 属性を再追加。カスタムバリデーション追加時に誤って削除していたため復元。スクリーンリーダーへの必須フィールド通知に必要
