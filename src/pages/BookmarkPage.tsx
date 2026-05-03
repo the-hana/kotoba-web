@@ -1,5 +1,4 @@
 import { BookmarkCheck } from 'lucide-react'
-import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { useBookmarks } from '@/hooks/useBookmarks'
 import { useBookmarkToggle } from '@/hooks/useBookmarkToggle'
 import type { JlptLevel } from '@/types'
@@ -19,8 +18,6 @@ export const BookmarkPage = () => {
 
   // 楽観的更新でbookmarked=falseになった単語を即時非表示
   const visibleWords = words.filter((w) => w.bookmarked)
-
-  if (loading) return <LoadingSpinner />
 
   return (
     <div className="p-6 max-w-2xl mx-auto">
@@ -52,8 +49,19 @@ export const BookmarkPage = () => {
         </p>
       )}
 
+      {/* ローディング: fixed でビューポート中央に表示（タブは維持） */}
+      {loading && (
+        <div className="fixed inset-0 flex items-center justify-center pointer-events-none">
+          <div
+            role="status"
+            aria-label="読み込み中"
+            className="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"
+          />
+        </div>
+      )}
+
       {/* 単語リスト */}
-      {visibleWords.length === 0 ? (
+      {!loading && visibleWords.length === 0 ? (
         <div className="bg-white rounded-2xl p-6 shadow-sm">
           <p className="text-slate-400 text-sm">
             {level ? `${level.toUpperCase()} 북마크한 단어가 없습니다.` : '북마크한 단어가 없습니다.'}

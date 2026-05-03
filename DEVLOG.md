@@ -11,7 +11,7 @@
 
 ---
 
-### プロフィールページ実装 — 닉네임 수정 / 목표 레벨 변경 / 회원 탈퇴
+### プロフィールページ実装 — ニックネーム修正・目標レベル変更・アカウント削除
 
 - `useProfile` フックを新規追加。`getProfile` / `updateProfile` / `deleteProfile` を呼び出す。loading / error / data パターンを既存フックと統一
 - ニックネームは inline edit パターン（`isEditing` フラグで input と表示を切替）。Enter / Escape キー対応

@@ -11,7 +11,7 @@ const ITEMS = [
 
 export const SidebarNav = () => (
   <aside className="hidden md:flex flex-col w-56 min-h-screen bg-white border-r border-slate-100 py-8 px-4">
-    <p className="text-lg font-bold text-indigo-500 px-3 mb-8">kotoba</p>
+    <span className="text-lg font-bold text-indigo-500 px-3 mb-8 block">kotoba</span>
     <nav aria-label="サイドバーナビゲーション" className="space-y-1">
       {ITEMS.map(({ to, icon: Icon, label }) => (
         <NavLink
