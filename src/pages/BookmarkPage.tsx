@@ -1,4 +1,5 @@
 import { BookmarkCheck } from 'lucide-react'
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { useBookmarks } from '@/hooks/useBookmarks'
 import { useBookmarkToggle } from '@/hooks/useBookmarkToggle'
 import type { JlptLevel } from '@/types'
@@ -49,16 +50,8 @@ export const BookmarkPage = () => {
         </p>
       )}
 
-      {/* ローディング: fixed でビューポート中央に表示（タブは維持） */}
-      {loading && (
-        <div className="fixed inset-0 flex items-center justify-center pointer-events-none">
-          <div
-            role="status"
-            aria-label="読み込み中"
-            className="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"
-          />
-        </div>
-      )}
+      {/* ローディング: タブを維持したままビューポート中央にスピナー表示 */}
+      {loading && <LoadingSpinner />}
 
       {/* 単語リスト */}
       {!loading && visibleWords.length === 0 ? (
