@@ -4,6 +4,13 @@
 
 ## 2026-05-03
 
+### モバイルトップヘッダー追加 + 単語帳ローディングスピナー位置修正
+
+- `AppShell` にモバイル専用トップヘッダー(`md:hidden sticky`)を追加。デスクトップはサイドバーにロゴあり、モバイルは未表示だったため追加
+- `BookmarkPage` の `LoadingSpinner` をインライン三項から early return パターンに変更。`LoadingSpinner` は `min-h-screen` を持つため、インライン配置ではタブの下にスピナーが沈み込む問題があった
+
+---
+
 ### プロフィールページ実装 — 닉네임 수정 / 목표 레벨 변경 / 회원 탈퇴
 
 - `useProfile` フックを新規追加。`getProfile` / `updateProfile` / `deleteProfile` を呼び出す。loading / error / data パターンを既存フックと統一
