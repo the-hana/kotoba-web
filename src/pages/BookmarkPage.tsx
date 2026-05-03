@@ -20,6 +20,8 @@ export const BookmarkPage = () => {
   // 楽観的更新でbookmarked=falseになった単語を即時非表示
   const visibleWords = words.filter((w) => w.bookmarked)
 
+  if (loading) return <LoadingSpinner />
+
   return (
     <div className="p-6 max-w-2xl mx-auto">
       <h1 className="text-2xl font-bold text-slate-800 mb-6">단어장</h1>
@@ -51,9 +53,7 @@ export const BookmarkPage = () => {
       )}
 
       {/* 単語リスト */}
-      {loading ? (
-        <LoadingSpinner />
-      ) : visibleWords.length === 0 ? (
+      {visibleWords.length === 0 ? (
         <div className="bg-white rounded-2xl p-6 shadow-sm">
           <p className="text-slate-400 text-sm">
             {level ? `${level.toUpperCase()} 북마크한 단어가 없습니다.` : '북마크한 단어가 없습니다.'}
