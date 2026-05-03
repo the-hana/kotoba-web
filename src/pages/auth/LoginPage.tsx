@@ -2,9 +2,7 @@ import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { login } from '@/api/auth'
 import { useAuthStore } from '@/stores/authStore'
-import { toErrorMessage } from '@/utils/errorMessage'
-
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+import { toErrorMessage, EMAIL_RE } from '@/utils/errorMessage'
 
 export const LoginPage = () => {
   const navigate = useNavigate()
@@ -57,6 +55,7 @@ export const LoginPage = () => {
               type="email"
               value={email}
               onChange={(e) => { setEmail(e.target.value); setFieldErrors((prev) => ({ ...prev, email: undefined })) }}
+              required
               className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 ${fieldErrors.email ? 'border-red-400 focus:ring-red-400' : 'border-slate-200 focus:ring-indigo-500'}`}
             />
             {fieldErrors.email && <p className="text-red-500 text-xs mt-1">{fieldErrors.email}</p>}
@@ -68,6 +67,7 @@ export const LoginPage = () => {
               type="password"
               value={password}
               onChange={(e) => { setPassword(e.target.value); setFieldErrors((prev) => ({ ...prev, password: undefined })) }}
+              required
               className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 ${fieldErrors.password ? 'border-red-400 focus:ring-red-400' : 'border-slate-200 focus:ring-indigo-500'}`}
             />
             {fieldErrors.password && <p className="text-red-500 text-xs mt-1">{fieldErrors.password}</p>}

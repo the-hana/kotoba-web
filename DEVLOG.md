@@ -15,6 +15,14 @@
 - `api/client.ts` で `VITE_API_BASE_URL` 未設定時に起動時エラーをスロー。`baseURL` を定数化し `axios.post()` の URL 重複も解消
 - `useWords` の fire-and-forget を `console.warn` 付きの `.catch()` に変更。セッション更新失敗をサイレントに無視しないよう対応
 
+### コードレビュー対応 — required 属性復元・パスワード確認エラークリア修正・EMAIL_RE 共通化
+
+- `LoginPage` / `SignupPage` の `required` 属性を再追加。カスタムバリデーション追加時に誤って削除していたため復元。スクリーンリーダーへの必須フィールド通知に必要
+- `SignupPage.setField` の `password` ケースで `passwordConfirm` エラーも同時クリアするよう修正。パスワードを修正しても確認フィールドのエラーが残り続ける UX バグを解消
+- `EMAIL_RE` を `src/utils/errorMessage.ts` に移動し共通化。`LoginPage` / `SignupPage` それぞれに定義されていた重複を除去
+- `NAV_ITEMS` に `as const` を追加。`to` フィールドが文字列リテラル型として推論され型安全性が向上
+- `setField('target_level')` 呼び出し時に `FieldErrors` に存在しないキーを操作していた型不整合を修正（`target_level` は早期 return で除外）
+
 ### モバイルトップヘッダー追加 + 単語帳ローディングスピナー位置修正
 
 - `AppShell` にモバイル専用トップヘッダー(`md:hidden sticky`)を追加。デスクトップはサイドバーにロゴあり、モバイルは未表示だったため追加

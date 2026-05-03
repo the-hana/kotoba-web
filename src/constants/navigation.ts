@@ -5,4 +5,4 @@ export const NAV_ITEMS = [
   { to: '/study', icon: BookOpen, label: '단어학습' },
   { to: '/bookmarks', icon: Bookmark, label: '단어장' },
   { to: '/profile', icon: User, label: '프로필' },
-]
+] as const

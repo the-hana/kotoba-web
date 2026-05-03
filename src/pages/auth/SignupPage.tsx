@@ -2,11 +2,9 @@ import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { signup } from '@/api/auth'
 import { useAuthStore } from '@/stores/authStore'
-import { toErrorMessage } from '@/utils/errorMessage'
+import { toErrorMessage, EMAIL_RE } from '@/utils/errorMessage'
 import { JLPT_LEVELS } from '@/constants/jlpt'
 import type { JlptLevel } from '@/types'
-
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 type FieldErrors = {
   email?: string
@@ -64,8 +62,14 @@ export const SignupPage = () => {
     (key: keyof typeof form) =>
     (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
       setForm((f) => ({ ...f, [key]: e.target.value }))
-      const errorKey = key === 'password_confirmation' ? 'passwordConfirm' : key as keyof FieldErrors
-      setFieldErrors((prev) => ({ ...prev, [errorKey]: undefined }))
+      if (key === 'target_level') return
+      if (key === 'password') {
+        // パスワード変更時は確認フィールドのエラーも同時にクリア
+        setFieldErrors((prev) => ({ ...prev, password: undefined, passwordConfirm: undefined }))
+      } else {
+        const errorKey = key === 'password_confirmation' ? 'passwordConfirm' : (key as keyof FieldErrors)
+        setFieldErrors((prev) => ({ ...prev, [errorKey]: undefined }))
+      }
     }
 
   return (
@@ -81,6 +85,7 @@ export const SignupPage = () => {
               type="email"
               value={form.email}
               onChange={setField('email')}
+              required
               className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 ${fieldErrors.email ? 'border-red-400 focus:ring-red-400' : 'border-slate-200 focus:ring-indigo-500'}`}
             />
             {fieldErrors.email && <p className="text-red-500 text-xs mt-1">{fieldErrors.email}</p>}
@@ -92,6 +97,7 @@ export const SignupPage = () => {
               type="text"
               value={form.nickname}
               onChange={setField('nickname')}
+              required
               maxLength={30}
               className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 ${fieldErrors.nickname ? 'border-red-400 focus:ring-red-400' : 'border-slate-200 focus:ring-indigo-500'}`}
             />
@@ -119,6 +125,7 @@ export const SignupPage = () => {
               type="password"
               value={form.password}
               onChange={setField('password')}
+              required
               className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 ${fieldErrors.password ? 'border-red-400 focus:ring-red-400' : 'border-slate-200 focus:ring-indigo-500'}`}
             />
             {fieldErrors.password && <p className="text-red-500 text-xs mt-1">{fieldErrors.password}</p>}
@@ -130,6 +137,7 @@ export const SignupPage = () => {
               type="password"
               value={form.password_confirmation}
               onChange={setField('password_confirmation')}
+              required
               className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 ${fieldErrors.passwordConfirm ? 'border-red-400 focus:ring-red-400' : 'border-slate-200 focus:ring-indigo-500'}`}
             />
             {fieldErrors.passwordConfirm && <p className="text-red-500 text-xs mt-1">{fieldErrors.passwordConfirm}</p>}
