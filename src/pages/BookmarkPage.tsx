@@ -2,15 +2,12 @@ import { BookmarkCheck } from 'lucide-react'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { useBookmarks } from '@/hooks/useBookmarks'
 import { useBookmarkToggle } from '@/hooks/useBookmarkToggle'
+import { JLPT_LEVELS } from '@/constants/jlpt'
 import type { JlptLevel } from '@/types'
 
 const LEVEL_TABS: { label: string; value: JlptLevel | undefined }[] = [
   { label: '전체', value: undefined },
-  { label: 'N5', value: 'n5' },
-  { label: 'N4', value: 'n4' },
-  { label: 'N3', value: 'n3' },
-  { label: 'N2', value: 'n2' },
-  { label: 'N1', value: 'n1' },
+  ...JLPT_LEVELS.map((l) => ({ label: l.toUpperCase(), value: l })),
 ]
 
 export const BookmarkPage = () => {

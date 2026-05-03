@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { getWordDays } from '@/api/wordDays'
+import { toErrorMessage } from '@/utils/errorMessage'
 import type { WordDay, JlptLevel } from '@/types'
 
 export const useWordDays = (level: JlptLevel) => {
@@ -14,10 +15,7 @@ export const useWordDays = (level: JlptLevel) => {
       .then((res) => {
         if (controller.signal.aborted) return
         if (res.data.success) setData(res.data.data)
-        else
-          setError(
-            typeof res.data.error === 'string' ? res.data.error : res.data.error.join(', '),
-          )
+        else setError(toErrorMessage(res.data.error))
       })
       .catch(() => {
         if (!controller.signal.aborted) setError('DAY 목록을 불러오지 못했습니다.')

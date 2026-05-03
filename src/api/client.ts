@@ -1,8 +1,11 @@
 import axios from 'axios'
 import { useAuthStore } from '@/stores/authStore'
 
+const baseURL = import.meta.env.VITE_API_BASE_URL as string | undefined
+if (!baseURL) throw new Error('VITE_API_BASE_URL が設定されていません')
+
 export const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL,
   headers: { 'Content-Type': 'application/json' },
 })
 
@@ -55,10 +58,7 @@ apiClient.interceptors.response.use(
     isRefreshing = true
 
     try {
-      const res = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/refresh`,
-        { refresh_token: refreshToken }
-      )
+      const res = await axios.post(`${baseURL}/api/v1/auth/refresh`, { refresh_token: refreshToken })
       if (!res.data.success) throw new Error('refresh failed')
       const { access_token, refresh_token } = res.data.data
       setTokens(access_token, refresh_token)

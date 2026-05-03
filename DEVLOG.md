@@ -4,6 +4,17 @@
 
 ## 2026-05-03
 
+### コード品質改善 — フォームバリデーション・定数共通化・エラー処理統一
+
+- `LoginPage` / `SignupPage` にクライアントサイドバリデーションを追加。メールアドレス形式（正規表現）・パスワード最低6文字・パスワード確認一致をフィールド単位でチェックし、エラーをフィールド下部に即時表示。API エラーも `success: false` のメッセージを直接表示するよう修正（汎用メッセージから変更）
+- `src/utils/errorMessage.ts` を新規作成。`string | string[]` → `string` 変換を `toErrorMessage()` として共通化。5 つのフック（`useBookmarks`, `useWords`, `useWordDays`, `useDailyStory`, `useStreak`）と `useProfile` のローカル定義を全て置き換え
+- `src/constants/jlpt.ts` に `JLPT_LEVELS` を集約。`SignupPage` / `StudyPage` のローカル重複定義を削除。`BookmarkPage` の `LEVEL_TABS` も `JLPT_LEVELS` から展開するよう変更
+- `src/constants/navigation.ts` に `NAV_ITEMS` を集約。`BottomTabNav` / `SidebarNav` それぞれに同一配列が定義されていたため共通化
+- `StudyPage` の URL パラメータ `dayId` に範囲チェックを追加（1〜999）。負数や過大な値は無効として DAY リストに戻す。また `wordDays` と `words` が空の場合の empty state を追加
+- `WordDetailModal` の `aria-label="閉じる"`（日本語）を `"닫기"`（韓国語）に修正。UI テキストは韓国語統一のルールに準拠
+- `api/client.ts` で `VITE_API_BASE_URL` 未設定時に起動時エラーをスロー。`baseURL` を定数化し `axios.post()` の URL 重複も解消
+- `useWords` の fire-and-forget を `console.warn` 付きの `.catch()` に変更。セッション更新失敗をサイレントに無視しないよう対応
+
 ### モバイルトップヘッダー追加 + 単語帳ローディングスピナー位置修正
 
 - `AppShell` にモバイル専用トップヘッダー(`md:hidden sticky`)を追加。デスクトップはサイドバーにロゴあり、モバイルは未表示だったため追加

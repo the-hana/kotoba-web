@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { getBookmarks } from '@/api/bookmarks'
+import { toErrorMessage } from '@/utils/errorMessage'
 import type { JlptLevel, Word } from '@/types'
 
 export const useBookmarks = () => {
@@ -19,9 +20,7 @@ export const useBookmarks = () => {
         if (res.data.success) {
           setWords(res.data.data)
         } else {
-          setError(
-            typeof res.data.error === 'string' ? res.data.error : res.data.error.join(', '),
-          )
+          setError(toErrorMessage(res.data.error))
         }
       })
       .catch(() => {
