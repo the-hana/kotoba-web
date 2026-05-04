@@ -39,7 +39,7 @@ apiClient.interceptors.response.use(
       return Promise.reject(error)
     }
 
-    const { refreshToken, setTokens, clearAuth } = useAuthStore.getState()
+    const { refreshToken, userId, setTokens, clearAuth } = useAuthStore.getState()
 
     if (!refreshToken) {
       clearAuth()
@@ -63,7 +63,15 @@ apiClient.interceptors.response.use(
     isRefreshing = true
 
     try {
-      const res = await axios.post(`${baseURL}/api/v1/auth/refresh`, { refresh_token: refreshToken })
+      const { accessToken: currentAccessToken } = useAuthStore.getState()
+      const refreshHeaders: Record<string, string> = {}
+      if (currentAccessToken) refreshHeaders['Authorization'] = `Bearer ${currentAccessToken}`
+
+      const res = await axios.post(
+        `${baseURL}/api/v1/auth/refresh`,
+        { refresh_token: refreshToken, user_id: userId },
+        { headers: refreshHeaders },
+      )
       if (!res.data.success) throw new Error('refresh failed')
       const { access_token, refresh_token } = res.data.data
       setTokens(access_token, refresh_token)

@@ -4,6 +4,13 @@
 
 ## 2026-05-04
 
+### refreshリクエストにuser_id送信・アクセストークン期限切れ時のセッション維持
+
+- `authStore` に `userId: number | null` を追加し localStorage に永続化。`setTokens` 内で access token を base64 デコードして `user_id` を自動抽出
+- `client.ts` の refresh 呼び出しに `user_id` を body に含めるよう修正。access token がメモリに残っていれば Authorization ヘッダーも付与
+- `ProtectedRoute.tsx` も同様に `userId` を body に含めるよう修正。ページリロード後に accessToken が null でも userId は localStorage から取得可能なため refresh が成功し、セッションが維持される
+- **設計判断**: accessToken はセキュリティ上メモリ専用のままにする。userId だけを localStorage に追加することで、ページリロード後の強制ログアウトを解消しつつ XSS リスクを最小化
+
 ### パスワード変更UIを追加・ESLintエラーを修正
 
 - プロフィール画面にパスワード変更セクションを追加。現在PW確認 → 新PW入力 → 保存のフロー

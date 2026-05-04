@@ -14,15 +14,19 @@ export const ProtectedRoute = () => {
     if (refreshingRef.current) return
     refreshingRef.current = true
 
-    const refreshToken = useAuthStore.getState().refreshToken
+    const { refreshToken, userId } = useAuthStore.getState()
     if (!refreshToken) {
       setInitialized()
       return
     }
 
     // interceptorを経由させないためaxiosを直接使用
+    // ページリロード直後はaccessTokenがメモリから消えているため、user_idのみ送信
     axios
-      .post(`${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/refresh`, { refresh_token: refreshToken })
+      .post(`${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/refresh`, {
+        refresh_token: refreshToken,
+        user_id: userId,
+      })
       .then((res) => {
         if (!res.data.success) throw new Error()
         const { access_token, refresh_token } = res.data.data
