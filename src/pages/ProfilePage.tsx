@@ -43,6 +43,13 @@ export const ProfilePage = () => {
   const [pwError, setPwError] = useState<string | null>(null)
   const [pwSuccess, setPwSuccess] = useState(false)
 
+  // 成功メッセージを3秒後に自動非表示
+  useEffect(() => {
+    if (!pwSuccess) return
+    const timer = setTimeout(() => setPwSuccess(false), 3000)
+    return () => clearTimeout(timer)
+  }, [pwSuccess])
+
   // ドロップダウン外クリックで閉じる（開いている時だけリスナーを登録）
   useEffect(() => {
     if (!isLevelOpen) return
@@ -65,12 +72,12 @@ export const ProfilePage = () => {
   }
 
   const validatePassword = (): boolean => {
-    const next: PasswordErrors = {}
-    if (!pwForm.current) next.current = '현재 비밀번호를 입력해주세요.'
-    if (pwForm.next.length < 6) next.next = '비밀번호는 6자 이상이어야 합니다.'
-    if (pwForm.next !== pwForm.confirm) next.confirm = '비밀번호가 일치하지 않습니다.'
-    setPwErrors(next)
-    return Object.keys(next).length === 0
+    const errs: PasswordErrors = {}
+    if (!pwForm.current) errs.current = '현재 비밀번호를 입력해주세요.'
+    if (pwForm.next.length < 6) errs.next = '비밀번호는 6자 이상이어야 합니다.'
+    if (pwForm.next !== pwForm.confirm) errs.confirm = '비밀번호가 일치하지 않습니다.'
+    setPwErrors(errs)
+    return Object.keys(errs).length === 0
   }
 
   const handlePasswordSubmit = async (e: React.FormEvent) => {
@@ -84,10 +91,9 @@ export const ProfilePage = () => {
       setPwForm({ current: '', next: '', confirm: '' })
       setIsPasswordOpen(false)
       setPwSuccess(true)
-      setTimeout(() => setPwSuccess(false), 3000)
     } catch (err) {
       if (isAxiosError(err) && err.response?.status === 422) {
-        setPwError('현재 비밀번호가 올바르지 않거나 새 비밀번호가 조건을 충족하지 않습니다.')
+        setPwError('현재 비밀번호가 올바르지 않습니다.')
       } else {
         setPwError('비밀번호 변경에 실패했습니다. 잠시 후 다시 시도해주세요.')
       }
