@@ -100,6 +100,14 @@ const WordListView = ({ level, dayNumber }: { level: JlptLevel; dayNumber: numbe
         </h1>
       </div>
 
+      <button
+        type="button"
+        onClick={() => navigate(`/study/${level}/${dayNumber}/flashcard`)}
+        className="w-full bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors mb-4"
+      >
+        플래시카드로 학습
+      </button>
+
       {bookmarkError && (
         <p className="text-red-500 text-sm mb-4 bg-red-50 rounded-lg px-3 py-2">{bookmarkError}</p>
       )}

@@ -1,0 +1,57 @@
+/* TailwindCSSで表現できない3D flip + カード送りアニメーション */
+.container {
+  perspective: 1000px;
+}
+
+.inner {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.5s ease;
+  cursor: pointer;
+}
+
+.inner.flipped {
+  transform: rotateY(180deg);
+}
+
+.face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.back {
+  transform: rotateY(180deg);
+}
+
+/* カード送りスライドアニメーション */
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(40%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-40%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.slideFromRight {
+  animation: slideInFromRight 0.25s ease-out;
+}
+
+.slideFromLeft {
+  animation: slideInFromLeft 0.25s ease-out;
+}
