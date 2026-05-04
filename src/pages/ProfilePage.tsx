@@ -81,9 +81,10 @@ export const ProfilePage = () => {
     setPwSuccess(false)
     try {
       await changePassword({ current_password: pwForm.current, new_password: pwForm.next })
-      setPwSuccess(true)
       setPwForm({ current: '', next: '', confirm: '' })
       setIsPasswordOpen(false)
+      setPwSuccess(true)
+      setTimeout(() => setPwSuccess(false), 3000)
     } catch (err) {
       if (isAxiosError(err) && err.response?.status === 422) {
         setPwError('현재 비밀번호가 올바르지 않거나 새 비밀번호가 조건을 충족하지 않습니다.')
@@ -199,9 +200,11 @@ export const ProfilePage = () => {
                 <div>
                   <input
                     type="password"
+                    aria-label="현재 비밀번호"
                     placeholder="현재 비밀번호"
                     value={pwForm.current}
                     onChange={(e) => { setPwForm((f) => ({ ...f, current: e.target.value })); setPwErrors((prev) => ({ ...prev, current: undefined })) }}
+                    autoFocus
                     className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 ${pwErrors.current ? 'border-red-400 focus:ring-red-400' : 'border-slate-200 focus:ring-indigo-300'}`}
                   />
                   {pwErrors.current && <p className="text-red-500 text-xs mt-1">{pwErrors.current}</p>}
@@ -209,6 +212,7 @@ export const ProfilePage = () => {
                 <div>
                   <input
                     type="password"
+                    aria-label="새 비밀번호"
                     placeholder="새 비밀번호 (6자 이상)"
                     value={pwForm.next}
                     onChange={(e) => { setPwForm((f) => ({ ...f, next: e.target.value })); setPwErrors((prev) => ({ ...prev, next: undefined, confirm: undefined })) }}
@@ -219,6 +223,7 @@ export const ProfilePage = () => {
                 <div>
                   <input
                     type="password"
+                    aria-label="새 비밀번호 확인"
                     placeholder="새 비밀번호 확인"
                     value={pwForm.confirm}
                     onChange={(e) => { setPwForm((f) => ({ ...f, confirm: e.target.value })); setPwErrors((prev) => ({ ...prev, confirm: undefined })) }}
