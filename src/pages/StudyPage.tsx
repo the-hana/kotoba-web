@@ -4,11 +4,8 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { useWordDays } from '@/hooks/useWordDays'
 import { useWords } from '@/hooks/useWords'
 import { useBookmarkToggle } from '@/hooks/useBookmarkToggle'
-import { JLPT_LEVELS } from '@/constants/jlpt'
+import { JLPT_LEVELS, isValidLevel } from '@/constants/jlpt'
 import type { JlptLevel } from '@/types'
-
-const isValidLevel = (l: string | undefined): l is JlptLevel =>
-  !!l && (JLPT_LEVELS as string[]).includes(l)
 
 // レベル選択グリッド
 const LevelSelectView = () => {

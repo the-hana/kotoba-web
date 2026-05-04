@@ -4,19 +4,16 @@ import { Bookmark, BookmarkCheck, ChevronLeft, ChevronRight } from 'lucide-react
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { useWords } from '@/hooks/useWords'
 import { useBookmarkToggle } from '@/hooks/useBookmarkToggle'
-import { JLPT_LEVELS } from '@/constants/jlpt'
+import { isValidLevel } from '@/constants/jlpt'
 import type { JlptLevel } from '@/types'
 import styles from './FlashCardPage.module.css'
-
-const isValidLevel = (l: string | undefined): l is JlptLevel =>
-  !!l && (JLPT_LEVELS as string[]).includes(l)
 
 // カード本体: 훅はここで呼ぶ
 const FlashCardView = ({ level, dayNumber }: { level: JlptLevel; dayNumber: number }) => {
   const navigate = useNavigate()
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isFlipped, setIsFlipped] = useState(false)
-  const [direction, setDirection] = useState<'next' | 'prev'>('next')
+  const [direction, setDirection] = useState<'next' | 'prev' | null>(null)
 
   const { words: rawWords, loading, error } = useWords(level, dayNumber)
   const { words, toggle, bookmarkError } = useBookmarkToggle(rawWords)
@@ -73,8 +70,8 @@ const FlashCardView = ({ level, dayNumber }: { level: JlptLevel; dayNumber: numb
       {/* 진행바 */}
       <div className="w-full h-1.5 bg-slate-200 rounded-full mb-12">
         <div
-          className="h-full bg-indigo-500 rounded-full transition-all duration-300"
-          style={{ width: `${progressPercent}%` }}
+          className={styles.progressBar}
+          style={{ '--progress': `${progressPercent}%` } as React.CSSProperties}
         />
       </div>
 
@@ -93,10 +90,16 @@ const FlashCardView = ({ level, dayNumber }: { level: JlptLevel; dayNumber: numb
         <div className={`${styles.container} w-full max-w-md`}>
           <div
             key={validIndex}
-            className={direction === 'next' ? styles.slideFromRight : styles.slideFromLeft}
+            className={
+              direction === 'next'
+                ? styles.slideFromRight
+                : direction === 'prev'
+                  ? styles.slideFromLeft
+                  : undefined
+            }
           >
-          <div
-            className={`${styles.inner} ${isFlipped ? styles.flipped : ''} w-full h-64 rounded-3xl shadow-lg`}
+            <div
+              className={`${styles.inner} ${isFlipped ? styles.flipped : ''} w-full h-64 rounded-3xl shadow-lg`}
             onClick={() => setIsFlipped((f) => !f)}
             role="button"
             tabIndex={0}
@@ -109,18 +112,18 @@ const FlashCardView = ({ level, dayNumber }: { level: JlptLevel; dayNumber: numb
                 : `카드 앞면: ${currentWord.japanese} · 클릭하면 뒤집기`
             }
           >
-            {/* 앞면: 일본어 */}
-            <div className={`${styles.face} bg-indigo-50 rounded-3xl flex flex-col items-center justify-center p-8`}>
-              <p className="text-5xl font-bold text-indigo-600 text-center">
-                {currentWord.japanese}
-              </p>
-              <p className="text-xl text-indigo-400 mt-3 text-center">{currentWord.hiragana}</p>
+              {/* 앞면: 일본어 */}
+              <div className={`${styles.face} bg-indigo-50 rounded-3xl flex flex-col items-center justify-center p-8`}>
+                <p className="text-5xl font-bold text-indigo-600 text-center">
+                  {currentWord.japanese}
+                </p>
+                <p className="text-xl text-indigo-400 mt-3 text-center">{currentWord.hiragana}</p>
+              </div>
+              {/* 뒷면: 한국어 */}
+              <div className={`${styles.face} ${styles.back} bg-slate-100 rounded-3xl flex items-center justify-center p-8`}>
+                <p className="text-4xl font-bold text-slate-800 text-center">{currentWord.korean}</p>
+              </div>
             </div>
-            {/* 뒷면: 한국어 */}
-            <div className={`${styles.face} ${styles.back} bg-slate-100 rounded-3xl flex items-center justify-center p-8`}>
-              <p className="text-4xl font-bold text-slate-800 text-center">{currentWord.korean}</p>
-            </div>
-          </div>
           </div>
         </div>
       </div>

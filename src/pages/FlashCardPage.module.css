@@ -1,4 +1,13 @@
-/* TailwindCSSで表現できない3D flip + カード送りアニメーション */
+/* TailwindCSSで表現できない動的値・3D flip・カード送りアニメーション */
+
+/* 動的widthをCSS変数で受け取る進捗バー */
+.progressBar {
+  height: 100%;
+  background-color: oklch(58.5% 0.233 277.117); /* indigo-500 */
+  border-radius: calc(infinity * 1px);
+  transition: width 0.3s ease;
+  width: var(--progress);
+}
 .container {
   perspective: 1000px;
 }
