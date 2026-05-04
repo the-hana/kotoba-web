@@ -25,7 +25,9 @@ type AuthStore = MemoryState & PersistedState & AuthActions
 
 const decodeJwtPayload = (token: string): { user_id?: number } => {
   try {
-    return JSON.parse(atob(token.split('.')[1]))
+    // JWTはbase64urlエンコード — atobが期待する標準base64に変換してからデコード
+    const base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')
+    return JSON.parse(atob(base64))
   } catch {
     return {}
   }

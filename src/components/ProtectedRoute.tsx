@@ -21,6 +21,7 @@ export const ProtectedRoute = () => {
     }
 
     // interceptorを経由させないためaxiosを直接使用
+    // ページリロード直後はaccessTokenがメモリから消えているため、user_idのみ送信
     axios
       .post(`${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/refresh`, {
         refresh_token: refreshToken,

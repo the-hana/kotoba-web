@@ -39,7 +39,7 @@ apiClient.interceptors.response.use(
       return Promise.reject(error)
     }
 
-    const { refreshToken, setTokens, clearAuth } = useAuthStore.getState()
+    const { refreshToken, userId, setTokens, clearAuth } = useAuthStore.getState()
 
     if (!refreshToken) {
       clearAuth()
@@ -63,7 +63,7 @@ apiClient.interceptors.response.use(
     isRefreshing = true
 
     try {
-      const { accessToken: currentAccessToken, userId } = useAuthStore.getState()
+      const { accessToken: currentAccessToken } = useAuthStore.getState()
       const refreshHeaders: Record<string, string> = {}
       if (currentAccessToken) refreshHeaders['Authorization'] = `Bearer ${currentAccessToken}`
 
