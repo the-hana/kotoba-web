@@ -2,6 +2,16 @@
 
 ---
 
+## 2026-05-04
+
+### パスワード変更UIを追加・ESLintエラーを修正
+
+- プロフィール画面にパスワード変更セクションを追加。現在PW確認 → 新PW入力 → 保存のフロー
+- フロント側で新PW一致を検証するため、APIには `current_password` と `new_password` のみ送信
+- `useBookmarks`: `setLoading(true)` / `setError(null)` の同期 setState を `useReducer` に置き換え（`react-hooks/set-state-in-effect` 違反の解消）
+- `useBookmarkToggle`: `useEffect` でのリセットを「renderフェーズのsetState（getDerivedStateFromPropsパターン）」に変更。同一の理由
+- `ProfilePage`: ローカルの `JLPT_LEVELS` 定義を `@/constants/jlpt` のインポートに統一
+
 ## 2026-05-03
 
 ### コード品質改善 — フォームバリデーション・定数共通化・エラー処理統一
