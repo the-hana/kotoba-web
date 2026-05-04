@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { getStudySession } from '@/api/studySession'
+import { toErrorMessage } from '@/utils/errorMessage'
 import type { StudySession, StreakStatus } from '@/types'
 
 export const useStreak = () => {
@@ -15,7 +16,7 @@ export const useStreak = () => {
       .then((res) => {
         if (controller.signal.aborted) return
         if (!res.data.success) {
-          setError(typeof res.data.error === 'string' ? res.data.error : res.data.error.join(', '))
+          setError(toErrorMessage(res.data.error))
           return
         }
         const s = res.data.data

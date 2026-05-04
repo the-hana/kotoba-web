@@ -4,6 +4,32 @@
 
 ## 2026-05-03
 
+### コード品質改善 — フォームバリデーション・定数共通化・エラー処理統一
+
+- `LoginPage` / `SignupPage` にクライアントサイドバリデーションを追加。メールアドレス形式（正規表現）・パスワード最低6文字・パスワード確認一致をフィールド単位でチェックし、エラーをフィールド下部に即時表示。API エラーも `success: false` のメッセージを直接表示するよう修正（汎用メッセージから変更）
+- `src/utils/errorMessage.ts` を新規作成。`string | string[]` → `string` 変換を `toErrorMessage()` として共通化。5 つのフック（`useBookmarks`, `useWords`, `useWordDays`, `useDailyStory`, `useStreak`）と `useProfile` のローカル定義を全て置き換え
+- `src/constants/jlpt.ts` に `JLPT_LEVELS` を集約。`SignupPage` / `StudyPage` のローカル重複定義を削除。`BookmarkPage` の `LEVEL_TABS` も `JLPT_LEVELS` から展開するよう変更
+- `src/constants/navigation.ts` に `NAV_ITEMS` を集約。`BottomTabNav` / `SidebarNav` それぞれに同一配列が定義されていたため共通化
+- `StudyPage` の URL パラメータ `dayId` に範囲チェックを追加（1〜999）。負数や過大な値は無効として DAY リストに戻す。また `wordDays` と `words` が空の場合の empty state を追加
+- `WordDetailModal` の `aria-label="閉じる"`（日本語）を `"닫기"`（韓国語）に修正。UI テキストは韓国語統一のルールに準拠
+- `api/client.ts` で `VITE_API_BASE_URL` 未設定時に起動時エラーをスロー。`baseURL` を定数化し `axios.post()` の URL 重複も解消
+- `useWords` の fire-and-forget を `console.warn` 付きの `.catch()` に変更。セッション更新失敗をサイレントに無視しないよう対応
+
+### フォームエラーメッセージ改善・noValidate 追加・401インターセプター修正
+
+- `LoginPage` / `SignupPage` に `noValidate` を追加。ブラウザ標準バリデーション UI を無効化し、カスタムエラー表示に一本化
+- catch ブロックを HTTP ステータスコード別に分岐。ログイン 401 → "이메일 또는 비밀번호가 올바르지 않습니다."、サインアップ 422 → "이미 사용 중인 이메일입니다."、その他 → "실패했습니다. 잠시 후 다시 시도해주세요." と状況に応じたメッセージを表示
+- `isAxiosError` を使って Axios エラーと非 Axios エラー（ネットワーク断）を区別
+- `api/client.ts` のリフレッシュインターセプターに `/auth/login` と `/auth/signup` の除外チェックを追加。ログイン失敗の 401 がリフレッシュ処理に流れ込み `/login` にリダイレクトされるバグを修正
+
+### コードレビュー対応 — required 属性復元・パスワード確認エラークリア修正・EMAIL_RE 共通化
+
+- `LoginPage` / `SignupPage` の `required` 属性を再追加。カスタムバリデーション追加時に誤って削除していたため復元。スクリーンリーダーへの必須フィールド通知に必要
+- `SignupPage.setField` の `password` ケースで `passwordConfirm` エラーも同時クリアするよう修正。パスワードを修正しても確認フィールドのエラーが残り続ける UX バグを解消
+- `EMAIL_RE` を `src/utils/errorMessage.ts` に移動し共通化。`LoginPage` / `SignupPage` それぞれに定義されていた重複を除去
+- `NAV_ITEMS` に `as const` を追加。`to` フィールドが文字列リテラル型として推論され型安全性が向上
+- `setField('target_level')` 呼び出し時に `FieldErrors` に存在しないキーを操作していた型不整合を修正（`target_level` は早期 return で除外）
+
 ### モバイルトップヘッダー追加 + 単語帳ローディングスピナー位置修正
 
 - `AppShell` にモバイル専用トップヘッダー(`md:hidden sticky`)を追加。デスクトップはサイドバーにロゴあり、モバイルは未表示だったため追加

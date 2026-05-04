@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react'
 import { getProfile, updateProfile, deleteProfile } from '@/api/profile'
 import { useAuthStore } from '@/stores/authStore'
+import { toErrorMessage } from '@/utils/errorMessage'
 import type { JlptLevel, User } from '@/types'
-
-const toErrorMessage = (err: string | string[]) =>
-  typeof err === 'string' ? err : err.join(', ')
 
 export const useProfile = () => {
   const clearAuth = useAuthStore((s) => s.clearAuth)

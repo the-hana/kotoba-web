@@ -49,7 +49,7 @@ export const WordDetailModal = ({ word, onClose }: Props) => {
             ref={closeButtonRef}
             onClick={onClose}
             className="text-slate-400 hover:text-slate-600 text-xl leading-none"
-            aria-label="閉じる"
+            aria-label="닫기"
           >
             ✕
           </button>

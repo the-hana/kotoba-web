@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { getWords } from '@/api/words'
 import { getWordDays } from '@/api/wordDays'
 import { updateStudySession } from '@/api/studySession'
+import { toErrorMessage } from '@/utils/errorMessage'
 import type { Word, JlptLevel } from '@/types'
 
 export const useWords = (level: JlptLevel, dayNumber: number) => {
@@ -25,9 +26,7 @@ export const useWords = (level: JlptLevel, dayNumber: number) => {
           if (res.data.success) {
             setWords(res.data.data)
           } else {
-            setError(
-              typeof res.data.error === 'string' ? res.data.error : res.data.error.join(', '),
-            )
+            setError(toErrorMessage(res.data.error))
           }
         } else {
           setError('단어를 불러오지 못했습니다.')
@@ -36,7 +35,11 @@ export const useWords = (level: JlptLevel, dayNumber: number) => {
         // 学習セッションを更新（fire-and-forget）
         if (daysResult.status === 'fulfilled' && daysResult.value.data.success) {
           const wordDay = daysResult.value.data.data.find((d) => d.day_number === dayNumber)
-          if (wordDay) updateStudySession(wordDay.id).catch(() => {})
+          if (wordDay) {
+            updateStudySession(wordDay.id).catch((err) => {
+              console.warn('学習セッションの更新に失敗しました:', err)
+            })
+          }
         }
       })
       .catch(() => {

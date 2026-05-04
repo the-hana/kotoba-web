@@ -4,12 +4,11 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { useWordDays } from '@/hooks/useWordDays'
 import { useWords } from '@/hooks/useWords'
 import { useBookmarkToggle } from '@/hooks/useBookmarkToggle'
+import { JLPT_LEVELS } from '@/constants/jlpt'
 import type { JlptLevel } from '@/types'
 
-const LEVELS: JlptLevel[] = ['n5', 'n4', 'n3', 'n2', 'n1']
-
 const isValidLevel = (l: string | undefined): l is JlptLevel =>
-  !!l && (LEVELS as string[]).includes(l)
+  !!l && (JLPT_LEVELS as string[]).includes(l)
 
 // レベル選択グリッド
 const LevelSelectView = () => {
@@ -18,7 +17,7 @@ const LevelSelectView = () => {
     <div className="p-6 max-w-2xl mx-auto">
       <h1 className="text-2xl font-bold text-slate-800 mb-6">단어학습</h1>
       <div className="grid grid-cols-5 gap-3">
-        {LEVELS.map((level) => (
+        {JLPT_LEVELS.map((level) => (
           <button
             key={level}
             type="button"
@@ -56,6 +55,8 @@ const DayListView = ({ level }: { level: JlptLevel }) => {
 
       {error ? (
         <p className="text-red-500 text-sm">{error}</p>
+      ) : wordDays.length === 0 ? (
+        <p className="text-slate-400 text-sm">학습 가능한 DAY가 없습니다.</p>
       ) : (
         <div className="grid grid-cols-4 gap-3">
           {wordDays.map((day) => (
@@ -105,6 +106,8 @@ const WordListView = ({ level, dayNumber }: { level: JlptLevel; dayNumber: numbe
 
       {error ? (
         <p className="text-red-500 text-sm">{error}</p>
+      ) : words.length === 0 ? (
+        <p className="text-slate-400 text-sm">단어가 없습니다.</p>
       ) : (
         <div className="space-y-3">
           {words.map((word) => (
@@ -142,7 +145,10 @@ export const StudyPage = () => {
 
   if (isValidLevel(level) && dayId) {
     const dayNumber = parseInt(dayId, 10)
-    if (!isNaN(dayNumber)) return <WordListView level={level} dayNumber={dayNumber} />
+    // 範囲外のDAY番号は無効とみなしてDAYリストに戻す
+    if (!isNaN(dayNumber) && dayNumber > 0 && dayNumber <= 999) {
+      return <WordListView level={level} dayNumber={dayNumber} />
+    }
   }
 
   if (isValidLevel(level)) return <DayListView level={level} />
