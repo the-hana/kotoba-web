@@ -20,6 +20,27 @@ const FlashCardView = ({ level, dayNumber }: { level: JlptLevel; dayNumber: numb
 
   if (loading) return <LoadingSpinner />
 
+  if (error) {
+    return (
+      <div className="p-6 max-w-2xl mx-auto">
+        <div className="flex items-center gap-3 mb-6">
+          <button
+            type="button"
+            onClick={() => navigate(`/study/${level}/${dayNumber}`)}
+            className="p-1.5 rounded-lg text-slate-500 hover:bg-slate-100 transition-colors"
+            aria-label="뒤로"
+          >
+            <ChevronLeft size={20} />
+          </button>
+          <h1 className="text-2xl font-bold text-slate-800">
+            {level.toUpperCase()} · DAY {dayNumber}
+          </h1>
+        </div>
+        <p className="text-red-500 text-sm bg-red-50 rounded-lg px-3 py-2">{error}</p>
+      </div>
+    )
+  }
+
   if (words.length === 0) {
     return (
       <div className="p-6 max-w-2xl mx-auto">
@@ -100,18 +121,18 @@ const FlashCardView = ({ level, dayNumber }: { level: JlptLevel; dayNumber: numb
           >
             <div
               className={`${styles.inner} ${isFlipped ? styles.flipped : ''} w-full h-64 rounded-3xl shadow-lg`}
-            onClick={() => setIsFlipped((f) => !f)}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') setIsFlipped((f) => !f)
-            }}
-            aria-label={
-              isFlipped
-                ? `카드 뒷면: ${currentWord.korean} · 클릭하면 뒤집기`
-                : `카드 앞면: ${currentWord.japanese} · 클릭하면 뒤집기`
-            }
-          >
+              onClick={() => setIsFlipped((f) => !f)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') setIsFlipped((f) => !f)
+              }}
+              aria-label={
+                isFlipped
+                  ? `카드 뒷면: ${currentWord.korean} · 클릭하면 뒤집기`
+                  : `카드 앞면: ${currentWord.japanese} · 클릭하면 뒤집기`
+              }
+            >
               {/* 앞면: 일본어 */}
               <div className={`${styles.face} bg-indigo-50 rounded-3xl flex flex-col items-center justify-center p-8`}>
                 <p className="text-5xl font-bold text-indigo-600 text-center">
