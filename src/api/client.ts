@@ -63,7 +63,15 @@ apiClient.interceptors.response.use(
     isRefreshing = true
 
     try {
-      const res = await axios.post(`${baseURL}/api/v1/auth/refresh`, { refresh_token: refreshToken })
+      const { accessToken: currentAccessToken, userId } = useAuthStore.getState()
+      const refreshHeaders: Record<string, string> = {}
+      if (currentAccessToken) refreshHeaders['Authorization'] = `Bearer ${currentAccessToken}`
+
+      const res = await axios.post(
+        `${baseURL}/api/v1/auth/refresh`,
+        { refresh_token: refreshToken, user_id: userId },
+        { headers: refreshHeaders },
+      )
       if (!res.data.success) throw new Error('refresh failed')
       const { access_token, refresh_token } = res.data.data
       setTokens(access_token, refresh_token)
