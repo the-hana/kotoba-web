@@ -2,7 +2,26 @@
 
 ---
 
+## 2026-05-05
+
+### フラッシュカードモードのバグ修正
+
+- API エラー時に `words.length === 0` の空状態チェックより先にエラーを返すよう修正。以前は `useWords` がエラーを返しても「학습 가능한 단어가 없습니다」のみ表示されていた
+- カード内側 `<div>` の `onClick` / `role` / `tabIndex` / `onKeyDown` / `aria-label` props のインデントを `className` と揃えて修正
+
+---
+
 ## 2026-05-04
+
+### フラッシュカードモードを追加
+
+- `FlashCardPage.tsx` を新規作成。`/study/:level/:dayId/flashcard` ルートに対応
+- `StudyPage` の `WordListView` 上部に「플래시카드로 학습」ボタンを追加し、フラッシュカードへの導線を設置
+- CSS 3D flip（`transform-style: preserve-3d` / `backface-visibility: hidden`）を `FlashCardPage.module.css` に分離。Tailwind arbitrary values では `-webkit-backface-visibility` が表現できないため CSS Module を採用
+- カード送りアニメーション（次→右からスライドイン、前→左からスライドイン）を `key={validIndex}` によるアンマウント再マウント + CSS `@keyframes` で実装
+- 最後のカード到達時に「학습 완료」ボタンを表示し、単語リストへ戻る導線を追加
+- 既存の `useWords` / `useBookmarkToggle` フックを再利用し、北마크の楽観的更新もフラッシュカード上で動作
+- **設計判断**: URL パラメータ検証を `FlashCardPage`（外側）で行い、フック呼び出しは `FlashCardView`（内側）に委譲。React Hooks ルール（条件分岐前のフック呼び出し禁止）を遵守するためのパターン
 
 ### refreshリクエストにuser_id送信・アクセストークン期限切れ時のセッション維持
 
