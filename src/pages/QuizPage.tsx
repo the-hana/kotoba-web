@@ -98,7 +98,7 @@ const QuizView = ({ level, dayNumber }: { level: JlptLevel; dayNumber: number })
   const answered = selectedId !== null
   const finished = questions.length > 0 && currentIndex >= questions.length
 
-  // 결果画面
+  // 結果画面
   if (finished) {
     return (
       <div className="p-6 max-w-2xl mx-auto flex flex-col items-center">
@@ -225,7 +225,6 @@ const QuizView = ({ level, dayNumber }: { level: JlptLevel; dayNumber: number })
           </button>
         ))}
       </div>
-
     </div>
   )
 }
