@@ -74,7 +74,7 @@ const QuizView = ({ level, dayNumber }: { level: JlptLevel; dayNumber: number })
     )
   }
 
-  if (!loading && rawWords.length < 4) {
+  if (rawWords.length < 4) {
     return (
       <div className="p-6 max-w-2xl mx-auto">
         <div className="flex items-center gap-3 mb-6">
