@@ -180,13 +180,15 @@ export const ProfilePage = () => {
           <div>
             <div className="flex items-center justify-between">
               <p className="text-xs text-slate-400">비밀번호</p>
-              <button
-                type="button"
-                onClick={() => { setIsPasswordOpen((v) => !v); setPwError(null); setPwSuccess(false) }}
-                className="text-xs text-indigo-500 px-2 py-1 rounded hover:bg-indigo-50 hover:text-indigo-700 transition-colors"
-              >
-                {isPasswordOpen ? '취소' : '변경'}
-              </button>
+              {!isPasswordOpen && (
+                <button
+                  type="button"
+                  onClick={() => { setIsPasswordOpen(true); setPwError(null); setPwSuccess(false) }}
+                  className="text-xs text-indigo-500 px-2 py-1 rounded hover:bg-indigo-50 hover:text-indigo-700 transition-colors"
+                >
+                  변경
+                </button>
+              )}
             </div>
             {pwSuccess && !isPasswordOpen && (
               <p className="text-green-600 text-xs mt-1">비밀번호가 변경되었습니다.</p>
