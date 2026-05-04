@@ -8,3 +8,6 @@ export const updateProfile = (data: { nickname?: string; target_level?: JlptLeve
   apiClient.put<ApiResponse<User>>('/api/v1/profile', data)
 
 export const deleteProfile = () => apiClient.delete<ApiResponse<null>>('/api/v1/profile')
+
+export const changePassword = (data: { current_password: string; new_password: string }) =>
+  apiClient.put<ApiResponse<null>>('/api/v1/profile/password', data)

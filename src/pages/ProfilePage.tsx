@@ -1,13 +1,16 @@
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { isAxiosError } from 'axios'
 import { ChevronDown } from 'lucide-react'
 import { logout } from '@/api/auth'
+import { changePassword } from '@/api/profile'
 import { useAuthStore } from '@/stores/authStore'
 import { useProfile } from '@/hooks/useProfile'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
-import type { JlptLevel } from '@/types'
+import { JLPT_LEVELS } from '@/constants/jlpt'
 
-const JLPT_LEVELS: JlptLevel[] = ['n5', 'n4', 'n3', 'n2', 'n1']
+type PasswordForm = { current: string; next: string; confirm: string }
+type PasswordErrors = { current?: string; next?: string; confirm?: string }
 
 export const ProfilePage = () => {
   const navigate = useNavigate()
@@ -33,6 +36,13 @@ export const ProfilePage = () => {
   const [isLevelOpen, setIsLevelOpen] = useState(false)
   const levelRef = useRef<HTMLDivElement>(null)
 
+  const [isPasswordOpen, setIsPasswordOpen] = useState(false)
+  const [pwForm, setPwForm] = useState<PasswordForm>({ current: '', next: '', confirm: '' })
+  const [pwErrors, setPwErrors] = useState<PasswordErrors>({})
+  const [pwSaving, setPwSaving] = useState(false)
+  const [pwError, setPwError] = useState<string | null>(null)
+  const [pwSuccess, setPwSuccess] = useState(false)
+
   // ドロップダウン外クリックで閉じる（開いている時だけリスナーを登録）
   useEffect(() => {
     if (!isLevelOpen) return
@@ -52,6 +62,45 @@ export const ProfilePage = () => {
       clearAuth()
       navigate('/login')
     }
+  }
+
+  const validatePassword = (): boolean => {
+    const next: PasswordErrors = {}
+    if (!pwForm.current) next.current = '현재 비밀번호를 입력해주세요.'
+    if (pwForm.next.length < 6) next.next = '비밀번호는 6자 이상이어야 합니다.'
+    if (pwForm.next !== pwForm.confirm) next.confirm = '비밀번호가 일치하지 않습니다.'
+    setPwErrors(next)
+    return Object.keys(next).length === 0
+  }
+
+  const handlePasswordSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!validatePassword()) return
+    setPwSaving(true)
+    setPwError(null)
+    setPwSuccess(false)
+    try {
+      await changePassword({ current_password: pwForm.current, new_password: pwForm.next })
+      setPwSuccess(true)
+      setPwForm({ current: '', next: '', confirm: '' })
+      setIsPasswordOpen(false)
+    } catch (err) {
+      if (isAxiosError(err) && err.response?.status === 422) {
+        setPwError('현재 비밀번호가 올바르지 않거나 새 비밀번호가 조건을 충족하지 않습니다.')
+      } else {
+        setPwError('비밀번호 변경에 실패했습니다. 잠시 후 다시 시도해주세요.')
+      }
+    } finally {
+      setPwSaving(false)
+    }
+  }
+
+  const cancelPassword = () => {
+    setIsPasswordOpen(false)
+    setPwForm({ current: '', next: '', confirm: '' })
+    setPwErrors({})
+    setPwError(null)
+    setPwSuccess(false)
   }
 
   const handleDeleteAccount = async () => {
@@ -124,6 +173,75 @@ export const ProfilePage = () => {
                   수정
                 </button>
               </div>
+            )}
+          </div>
+
+          {/* パスワード変更 */}
+          <div>
+            <div className="flex items-center justify-between">
+              <p className="text-xs text-slate-400">비밀번호</p>
+              <button
+                type="button"
+                onClick={() => { setIsPasswordOpen((v) => !v); setPwError(null); setPwSuccess(false) }}
+                className="text-xs text-indigo-500 px-2 py-1 rounded hover:bg-indigo-50 hover:text-indigo-700 transition-colors"
+              >
+                {isPasswordOpen ? '취소' : '변경'}
+              </button>
+            </div>
+            {pwSuccess && !isPasswordOpen && (
+              <p className="text-green-600 text-xs mt-1">비밀번호가 변경되었습니다.</p>
+            )}
+            {isPasswordOpen && (
+              <form onSubmit={handlePasswordSubmit} noValidate className="mt-3 space-y-3">
+                {pwError && <p className="text-red-500 text-xs">{pwError}</p>}
+                <div>
+                  <input
+                    type="password"
+                    placeholder="현재 비밀번호"
+                    value={pwForm.current}
+                    onChange={(e) => { setPwForm((f) => ({ ...f, current: e.target.value })); setPwErrors((prev) => ({ ...prev, current: undefined })) }}
+                    className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 ${pwErrors.current ? 'border-red-400 focus:ring-red-400' : 'border-slate-200 focus:ring-indigo-300'}`}
+                  />
+                  {pwErrors.current && <p className="text-red-500 text-xs mt-1">{pwErrors.current}</p>}
+                </div>
+                <div>
+                  <input
+                    type="password"
+                    placeholder="새 비밀번호 (6자 이상)"
+                    value={pwForm.next}
+                    onChange={(e) => { setPwForm((f) => ({ ...f, next: e.target.value })); setPwErrors((prev) => ({ ...prev, next: undefined, confirm: undefined })) }}
+                    className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 ${pwErrors.next ? 'border-red-400 focus:ring-red-400' : 'border-slate-200 focus:ring-indigo-300'}`}
+                  />
+                  {pwErrors.next && <p className="text-red-500 text-xs mt-1">{pwErrors.next}</p>}
+                </div>
+                <div>
+                  <input
+                    type="password"
+                    placeholder="새 비밀번호 확인"
+                    value={pwForm.confirm}
+                    onChange={(e) => { setPwForm((f) => ({ ...f, confirm: e.target.value })); setPwErrors((prev) => ({ ...prev, confirm: undefined })) }}
+                    className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 ${pwErrors.confirm ? 'border-red-400 focus:ring-red-400' : 'border-slate-200 focus:ring-indigo-300'}`}
+                  />
+                  {pwErrors.confirm && <p className="text-red-500 text-xs mt-1">{pwErrors.confirm}</p>}
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    type="submit"
+                    disabled={pwSaving}
+                    className="flex-1 bg-indigo-500 text-white text-sm rounded-lg py-2 hover:bg-indigo-600 disabled:opacity-50 transition-colors"
+                  >
+                    {pwSaving ? '저장 중...' : '저장'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={cancelPassword}
+                    disabled={pwSaving}
+                    className="flex-1 border border-slate-200 text-slate-600 text-sm rounded-lg py-2 hover:bg-slate-50 transition-colors"
+                  >
+                    취소
+                  </button>
+                </div>
+              </form>
             )}
           </div>
 

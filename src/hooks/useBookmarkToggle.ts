@@ -1,16 +1,18 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback } from 'react'
 import { addBookmark, removeBookmark } from '@/api/bookmarks'
 import type { Word } from '@/types'
 
 // ローカルの楽観的更新をoverridesマップで管理し、initialWordsと合成する
 export const useBookmarkToggle = (initialWords: Word[]) => {
   const [overrides, setOverrides] = useState<Record<number, boolean>>({})
+  const [prevInitialWords, setPrevInitialWords] = useState(initialWords)
   const [bookmarkError, setBookmarkError] = useState<string | null>(null)
 
-  // initialWordsが差し替わった（レベル変更・再フェッチ）タイミングでoverridesをリセット
-  useEffect(() => {
+  // initialWordsが差し替わったタイミングでoverridesをリセット（getDerivedStateFromPropsパターン）
+  if (prevInitialWords !== initialWords) {
+    setPrevInitialWords(initialWords)
     setOverrides({})
-  }, [initialWords])
+  }
 
   const words = initialWords.map((w) =>
     w.id in overrides ? { ...w, bookmarked: overrides[w.id] } : w,
