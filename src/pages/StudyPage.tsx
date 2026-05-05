@@ -97,13 +97,22 @@ const WordListView = ({ level, dayNumber }: { level: JlptLevel; dayNumber: numbe
         </h1>
       </div>
 
-      <button
-        type="button"
-        onClick={() => navigate(`/study/${level}/${dayNumber}/flashcard`)}
-        className="w-full bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors mb-4"
-      >
-        플래시카드로 학습
-      </button>
+      <div className="grid grid-cols-2 gap-3 mb-4">
+        <button
+          type="button"
+          onClick={() => navigate(`/study/${level}/${dayNumber}/flashcard`)}
+          className="bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors"
+        >
+          플래시카드
+        </button>
+        <button
+          type="button"
+          onClick={() => navigate(`/study/${level}/${dayNumber}/quiz`)}
+          className="bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors"
+        >
+          퀴즈
+        </button>
+      </div>
 
       {bookmarkError && (
         <p className="text-red-500 text-sm mb-4 bg-red-50 rounded-lg px-3 py-2">{bookmarkError}</p>

@@ -6,6 +6,7 @@ import { SignupPage } from '@/pages/auth/SignupPage'
 import { DashboardPage } from '@/pages/DashboardPage'
 import { StudyPage } from '@/pages/StudyPage'
 import { FlashCardPage } from '@/pages/FlashCardPage'
+import { QuizPage } from '@/pages/QuizPage'
 import { BookmarkPage } from '@/pages/BookmarkPage'
 import { ProfilePage } from '@/pages/ProfilePage'
 
@@ -21,6 +22,7 @@ export const App = () => (
           <Route path="/study/:level" element={<StudyPage />} />
           <Route path="/study/:level/:dayId" element={<StudyPage />} />
           <Route path="/study/:level/:dayId/flashcard" element={<FlashCardPage />} />
+          <Route path="/study/:level/:dayId/quiz" element={<QuizPage />} />
           <Route path="/bookmarks" element={<BookmarkPage />} />
           <Route path="/profile" element={<ProfilePage />} />
         </Route>
