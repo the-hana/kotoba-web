@@ -1,0 +1,64 @@
+name: Deploy Web
+
+on:
+  push:
+    branches: [main]
+
+env:
+  AWS_REGION: ap-northeast-1
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - run: pnpm install --frozen-lockfile
+
+      # VITE_API_BASE_URL はビルド時にバンドルへ埋め込まれる (import.meta.env)
+      - run: pnpm build
+        env:
+          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
+
+      - name: AWS認証 (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      # JS/CSS/画像: Viteがhash付きファイル名を生成するためimmutableキャッシュ可
+      - name: S3にデプロイ (静的アセット)
+        run: |
+          aws s3 sync dist/ s3://${{ secrets.S3_BUCKET }} \
+            --delete \
+            --exclude "index.html" \
+            --exclude "*.json" \
+            --cache-control "public,max-age=31536000,immutable"
+
+      # index.html / JSON: 常に最新バージョンを取得させる
+      - name: S3にデプロイ (index.html・JSON)
+        run: |
+          aws s3 sync dist/ s3://${{ secrets.S3_BUCKET }} \
+            --exclude "*" \
+            --include "index.html" \
+            --include "*.json" \
+            --cache-control "no-cache,no-store,must-revalidate"
+
+      - name: CloudFrontキャッシュ無効化
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id ${{ secrets.CF_DISTRIBUTION_ID }} \
+            --paths "/*"
