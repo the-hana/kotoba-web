@@ -2,6 +2,15 @@
 
 ---
 
+## 2026-05-27
+
+### GitHub Actions デプロイ workflow 追加
+
+- `.github/workflows/deploy.yml` を追加
+- `VITE_API_BASE_URL` を GitHub Secrets から受け取り、ビルド時に `import.meta.env` へ埋め込む。設定なしでは API 接続が全て失敗するため必須。
+- S3 sync を2段階に分割: 静的アセット (JS/CSS/画像) は Vite の hash 付きファイル名を前提に `immutable` キャッシュ、`index.html` / JSON は `no-cache` で常に最新を取得。
+- GitHub Secrets に必要な値: `AWS_ROLE_ARN`, `S3_BUCKET`, `CF_DISTRIBUTION_ID`, `VITE_API_BASE_URL`
+
 ## 2026-05-05
 
 ### クイズモード追加
