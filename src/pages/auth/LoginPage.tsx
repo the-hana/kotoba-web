@@ -29,7 +29,9 @@ export const LoginPage = () => {
     setError(null)
     try {
       const res = await login({ email: email.trim(), password })
-      const { access_token, refresh_token } = res.data.data
+      const result = res.data
+      if (!result.success) return
+      const { access_token, refresh_token } = result.data
       setTokens(access_token, refresh_token)
       navigate('/dashboard')
     } catch (err) {

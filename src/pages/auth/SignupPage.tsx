@@ -45,7 +45,9 @@ export const SignupPage = () => {
     setError(null)
     try {
       const res = await signup({ ...form, email: form.email.trim(), nickname: form.nickname.trim() })
-      const { access_token, refresh_token } = res.data.data
+      const result = res.data
+      if (!result.success) return
+      const { access_token, refresh_token } = result.data
       setTokens(access_token, refresh_token)
       navigate('/dashboard')
     } catch (err) {
