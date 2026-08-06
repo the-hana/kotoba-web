@@ -55,7 +55,7 @@ pnpm lint
 
 ## API 連携
 
-- access token はメモリ保管、refresh token は httpOnly cookie
+- access token はメモリ保管、refresh token は localStorage に保存（`authStore.ts`, zustand persist）
 - 全リクエストに `Authorization: Bearer <token>` ヘッダーを付与
 - レスポンス形式: `{ success, data, error }`
 - API 呼び出しは `src/api/` 配下にドメイン別で集約
@@ -63,7 +63,7 @@ pnpm lint
 ## コーディング規約
 
 - コンポーネント: PascalCase、Named export のみ（default export 禁止）
-- インライン `style={{}}` 禁止 — Tailwind クラスのみ使用
+- インライン `style={{}}` は原則禁止 — Tailwind クラスを使用（CSS変数注入など例外あり、例: `FlashCardPage.tsx` のプログレスバー）
 
 ## デプロイ
 
