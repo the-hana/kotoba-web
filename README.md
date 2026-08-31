@@ -6,7 +6,9 @@
 
 **Live**: https://dlxlfjdqep5lt.cloudfront.net
 
-<!-- スクリーンショット挿入予定 -->
+| ダッシュボード | フラッシュカード | クイズ | 単語帳 |
+|---|---|---|---|
+| ![dashboard](docs/screenshots/dashboard.png) | ![flashcard](docs/screenshots/flashcard.png) | ![quiz](docs/screenshots/quiz.png) | ![bookmarks](docs/screenshots/bookmarks.png) |
 
 ## 技術スタック
 
